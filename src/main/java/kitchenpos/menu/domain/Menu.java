@@ -1,19 +1,19 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.domain.Price;
 
 public class Menu {
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
+    public Menu(Long id, String name, Price price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
@@ -38,11 +38,11 @@ public class Menu {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(final Price price) {
         this.price = price;
     }
 

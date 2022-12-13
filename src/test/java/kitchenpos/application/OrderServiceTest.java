@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,14 +17,16 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.common.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.order.application.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,12 +65,12 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        스테이크 = new Product(1L, "스테이크", BigDecimal.valueOf(10_000));
-        파스타 = new Product(2L, "파스타", BigDecimal.valueOf(8_000));
-        샐러드 = new Product(3L, "샐러드", BigDecimal.valueOf(5_000));
+        스테이크 = new Product(1L, "스테이크", new Price(10_000));
+        파스타 = new Product(2L, "파스타", new Price(8_000));
+        샐러드 = new Product(3L, "샐러드", new Price(5_000));
         양식 = new MenuGroup(1L, "양식");
 
-        스테이크정식 = new Menu(1L, "스테이크정식", BigDecimal.valueOf(23_000), 양식.getId(), new ArrayList<>());
+        스테이크정식 = new Menu(1L, "스테이크정식", new Price(23_000), 양식.getId(), new ArrayList<>());
 
         스테이크상품 = new MenuProduct(1L, 스테이크정식.getId(), 스테이크.getId(), 1);
         파스타상품 = new MenuProduct(2L, 스테이크정식.getId(), 파스타.getId(), 1);

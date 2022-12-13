@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.common.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ public class ProductServiceTest {
     @Test
     void createProduct() {
         // given
-        Product product = new Product(1L, "떡볶이", BigDecimal.valueOf(3_000));
+        Product product = new Product(1L, "떡볶이", new Price(3_000));
         when(productDao.save(product)).thenReturn(product);
         // when
         Product result = productService.create(product);
@@ -61,7 +62,7 @@ public class ProductServiceTest {
     @ValueSource(ints = {-1, -1000, -20000})
     void createUnderZeroPriceProductionException(int input) {
         // given
-        Product product = new Product(1L, "떡볶이", BigDecimal.valueOf(input));
+        Product product = new Product(1L, "떡볶이", new Price(input));
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -72,7 +73,7 @@ public class ProductServiceTest {
     @Test
     void findAllProduct() {
         // given
-        Product product = new Product(1L, "떡볶이", BigDecimal.valueOf(3_000));
+        Product product = new Product(1L, "떡볶이", new Price(3_000));
         when(productDao.findAll()).thenReturn(Arrays.asList(product));
 
         // when

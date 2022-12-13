@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,10 +13,12 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.common.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.application.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,12 +58,12 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        스테이크 = new Product(1L, "스테이크", BigDecimal.valueOf(10_000));
-        파스타 = new Product(2L, "파스타", BigDecimal.valueOf(8_000));
-        샐러드 = new Product(3L, "샐러드", BigDecimal.valueOf(5_000));
+        스테이크 = new Product(1L, "스테이크", new Price(10_000));
+        파스타 = new Product(2L, "파스타", new Price(8_000));
+        샐러드 = new Product(3L, "샐러드", new Price(5_000));
         양식 = new MenuGroup(1L, "양식");
 
-        스테이크정식 = new Menu(1L, "스테이크정식", BigDecimal.valueOf(23_000), 양식.getId(), new ArrayList<>());
+        스테이크정식 = new Menu(1L, "스테이크정식", new Price(23_000), 양식.getId(), new ArrayList<>());
 
         스테이크상품 = new MenuProduct(1L, 스테이크정식.getId(), 스테이크.getId(), 1);
         파스타상품 = new MenuProduct(2L, 스테이크정식.getId(), 파스타.getId(), 1);
@@ -110,7 +111,7 @@ public class MenuServiceTest {
     @ValueSource(ints = {-1, -1000, -20000})
     void createUnderZeroPriceMenuException(int input) {
         // given
-        스테이크정식 = new Menu(1L, "스테이크정식", BigDecimal.valueOf(input), 1L, new ArrayList<>());
+        스테이크정식 = new Menu(1L, "스테이크정식", new Price(input), 1L, new ArrayList<>());
 
         // when & then
         assertThatThrownBy(() -> menuService.create(스테이크정식))
@@ -121,7 +122,7 @@ public class MenuServiceTest {
     @Test
     void notExistMenuGroupException() {
         // given
-        스테이크정식 = new Menu(1L, "스테이크정식", BigDecimal.valueOf(1_000), 1L, new ArrayList<>());
+        스테이크정식 = new Menu(1L, "스테이크정식", new Price(1_000), 1L, new ArrayList<>());
 
         // when & then
         assertThatThrownBy(() -> menuService.create(스테이크정식))
@@ -132,7 +133,7 @@ public class MenuServiceTest {
     @Test
     void notExistProductException() {
         // given
-        스테이크정식 = new Menu(1L, "스테이크정식", BigDecimal.valueOf(1_000), 1L, new ArrayList<>());
+        스테이크정식 = new Menu(1L, "스테이크정식", new Price(1_000), 1L, new ArrayList<>());
         when(menuGroupDao.existsById(스테이크정식.getMenuGroupId())).thenReturn(true);
 
         // when & then
@@ -144,7 +145,7 @@ public class MenuServiceTest {
     @Test
     void menuPriceException() {
         // given
-        스테이크정식.setPrice(BigDecimal.valueOf(200_000));
+        스테이크정식.setPrice(new Price(200_000));
         when(menuGroupDao.existsById(스테이크정식.getMenuGroupId())).thenReturn(true);
         when(productDao.findById(스테이크상품.getProductId())).thenReturn(Optional.of(스테이크));
         when(productDao.findById(파스타상품.getProductId())).thenReturn(Optional.of(파스타));
